@@ -8,13 +8,6 @@ Demo-ready monorepo with a hotel booking API, MCP tools, and a ChatGPT-powered c
 pnpm install
 ```
 
-If `pnpm` is not available or corepack cannot download it (proxy restrictions), install pnpm manually:
-
-```bash
-npm install -g pnpm
-pnpm install
-```
-
 Create your environment file at the repo root:
 
 ```bash
@@ -53,13 +46,6 @@ pnpm dev
 ```
 
 The web app expects the API on `http://localhost:4000/api/v1` and uses `OPENAI_API_KEY` for chat.
-
-## Test the demo flow
-
-1. Start the API and web app (see commands above).
-2. In the web UI, ask for a booking (e.g., “Book a Resort Hotel in August 2027 for 2 adults, 1 child.”).
-3. Provide any missing fields the assistant requests.
-4. Say **confirm** to create the booking and watch the Booking Confirmation card update.
 
 ## Scripts (root)
 
