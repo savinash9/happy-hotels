@@ -1,1 +1,56 @@
-# happy-hotels
+# Happy Hotels SKO 2027
+
+Demo-ready monorepo with a hotel booking API, MCP tools, and a ChatGPT-powered concierge UI.
+
+## Quick Start
+
+```bash
+pnpm install
+```
+
+Create your environment file at the repo root:
+
+```bash
+cp .env.example .env
+```
+
+Copy API-specific settings for Prisma:
+
+```bash
+cp packages/api/.env.example packages/api/.env
+```
+
+For the web app, ensure `OPENAI_API_KEY` is available in `apps/web/.env.local` (copy from root if desired).
+
+### API (Express + Prisma + SQLite)
+
+```bash
+cd packages/api
+pnpm prisma generate
+pnpm prisma migrate dev --name init
+pnpm dev
+```
+
+### MCP Server
+
+```bash
+cd packages/mcp
+pnpm dev
+```
+
+### Web App (Next.js)
+
+```bash
+cd apps/web
+pnpm dev
+```
+
+The web app expects the API on `http://localhost:4000/api/v1` and uses `OPENAI_API_KEY` for chat.
+
+## Scripts (root)
+
+```bash
+pnpm dev
+```
+
+Starts the API and web app concurrently for the live demo.
