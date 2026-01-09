@@ -1,0 +1,40 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id                          String   @id @default(cuid())
+  hotel                       String
+  lead_time                   Int
+  arrival_date_year           Int
+  arrival_date_month          String
+  arrival_date_week_number    Int
+  arrival_date_day_of_month   Int
+  arrival_date                DateTime
+  stays_in_weekend_nights     Int
+  stays_in_week_nights        Int
+  adults                      Int
+  children                    Int
+  babies                      Int
+  meal                        String
+  country                     String
+  market_segment              String
+  is_repeated_guest           Boolean
+  reserved_room_type          String
+  agent                       String?
+  company                     String?
+  customer_type               String
+  adr                         Float
+  required_car_parking_spaces Int
+  total_of_special_requests   Int
+  reservation_status          String
+  reservation_status_date     String
+  created_at                  DateTime @default(now())
+  updated_at                  DateTime @updatedAt
+  deleted_at                  DateTime?
+}

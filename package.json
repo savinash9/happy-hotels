@@ -1,0 +1,14 @@
+{
+  "name": "happy-hotels-sko-2027",
+  "private": true,
+  "packageManager": "pnpm@9.12.3",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "pnpm --filter @happy-hotels/api dev & pnpm --filter @happy-hotels/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint"
+  }
+}
