@@ -39,6 +39,63 @@ const REQUIRED_FIELDS = [
   "reservation_status_date"
 ];
 
+const MONTH_NAMES = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december"
+];
+
+const NUMBER_FIELDS = new Set([
+  "lead_time",
+  "arrival_date_year",
+  "arrival_date_week_number",
+  "arrival_date_day_of_month",
+  "stays_in_weekend_nights",
+  "stays_in_week_nights",
+  "adults",
+  "children",
+  "babies",
+  "adr",
+  "required_car_parking_spaces",
+  "total_of_special_requests"
+]);
+
+const BOOLEAN_FIELDS = new Set(["is_repeated_guest"]);
+
+const FIELD_LABELS: Record<string, string> = {
+  hotel: "hotel (City Hotel or Resort Hotel)",
+  lead_time: "lead time (days before arrival)",
+  arrival_date_year: "arrival year (YYYY)",
+  arrival_date_month: "arrival month (full name, e.g. January)",
+  arrival_date_week_number: "arrival week number (1-53)",
+  arrival_date_day_of_month: "arrival day of month (1-31)",
+  stays_in_weekend_nights: "weekend nights",
+  stays_in_week_nights: "week nights",
+  adults: "number of adults",
+  children: "number of children",
+  babies: "number of babies",
+  meal: "meal plan (BB, HB, FB, SC, or empty)",
+  country: "country code (2-3 letters)",
+  market_segment: "market segment (Corporate, Direct, Groups, Online TA)",
+  is_repeated_guest: "repeat guest (true/false)",
+  reserved_room_type: "room type (A-H)",
+  customer_type: "customer type (Transient, Contract, Group, Other)",
+  adr: "average daily rate (ADR)",
+  required_car_parking_spaces: "required parking spaces",
+  total_of_special_requests: "total special requests",
+  reservation_status: "reservation status (Checked-In, Canceled, No-Show)",
+  reservation_status_date: "reservation status date (YYYY-MM-DD)"
+};
+
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const tools: OpenAI.Chat.Completions.ChatCompletionTool[] = [
@@ -104,6 +161,30 @@ function extractJson(content: string) {
   }
 }
 
+function getMissingFields(draft: Record<string, unknown> | null) {
+  const data = draft ?? {};
+  return REQUIRED_FIELDS.filter((field) => {
+    const value = data[field];
+    if (value === undefined || value === null) return true;
+    if (typeof value === "string" && value.trim() === "") return true;
+    if (NUMBER_FIELDS.has(field) && typeof value !== "number") return true;
+    if (BOOLEAN_FIELDS.has(field) && typeof value !== "boolean") return true;
+    if (field === "arrival_date_month" && typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      if (!MONTH_NAMES.includes(normalized)) return true;
+    }
+    return false;
+  });
+}
+
+function buildMissingMessage(missingFields: string[], booking: Record<string, unknown> | null) {
+  const prefix = booking?.hotel
+    ? `I can start a ${booking.hotel} booking.`
+    : "I can start your booking.";
+  const lines = missingFields.map((field) => `- ${FIELD_LABELS[field] ?? field}`);
+  return `${prefix} To complete it, please provide:\n${lines.join("\n")}`;
+}
+
 export async function POST(request: Request) {
   const body = (await request.json()) as {
     messages: ChatMessage[];
@@ -124,6 +205,42 @@ export async function POST(request: Request) {
 
   let conversation = [...baseMessages];
   let booking = body.booking ?? null;
+  const missingBefore = getMissingFields(booking);
+
+  if (confirmed && booking && missingBefore.length === 0) {
+    try {
+      let result: unknown;
+      if (typeof booking.id === "string") {
+        const { id, ...patch } = booking;
+        result = await updateBooking(id, patch);
+        toolTrace.push({ name: "update_booking", payload: { id, patch }, result });
+      } else {
+        result = await createBooking(booking);
+        toolTrace.push({ name: "create_booking", payload: { payload: booking }, result });
+      }
+
+      if (result && typeof result === "object") {
+        booking = result as Record<string, unknown>;
+      }
+
+      return NextResponse.json({
+        message: "Your booking has been confirmed.",
+        booking,
+        toolTrace
+      });
+    } catch (error) {
+      toolTrace.push({
+        name: typeof booking.id === "string" ? "update_booking" : "create_booking",
+        payload: booking,
+        error: error instanceof Error ? error.message : "Unknown error"
+      });
+      return NextResponse.json({
+        message: "I couldn't finalize the booking. Please try again.",
+        booking,
+        toolTrace
+      });
+    }
+  }
 
   for (let i = 0; i < 2; i += 1) {
     const completion = await openai.chat.completions.create({
@@ -192,9 +309,14 @@ export async function POST(request: Request) {
     if (parsed.draft && typeof parsed.draft === "object") {
       booking = { ...(booking ?? {}), ...parsed.draft };
     }
+    const missingFields = parsed.missing_fields?.length
+      ? parsed.missing_fields
+      : getMissingFields(booking);
 
     return NextResponse.json({
-      message: parsed.message ?? "",
+      message: missingFields.length > 0
+        ? buildMissingMessage(missingFields, booking)
+        : parsed.message ?? "",
       booking,
       toolTrace
     });
