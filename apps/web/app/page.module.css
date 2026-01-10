@@ -1,0 +1,186 @@
+.page {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+  padding: 32px;
+  min-height: 100vh;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba(12, 18, 36, 0.8);
+  border: 1px solid rgba(109, 128, 255, 0.2);
+  border-radius: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 20px 60px rgba(7, 12, 30, 0.6);
+}
+
+.logo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #fbbf24, #ec4899);
+  color: #1f2230;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.chatPane {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(7, 11, 24, 0.7);
+  border: 1px solid rgba(118, 150, 255, 0.2);
+  border-radius: 20px;
+  padding: 20px;
+  min-height: 70vh;
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 8px;
+  max-height: 60vh;
+}
+
+.message {
+  padding: 12px 16px;
+  border-radius: 14px;
+  line-height: 1.5;
+  font-size: 14px;
+  border: 1px solid transparent;
+}
+
+.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  color: #fff;
+}
+
+.assistant {
+  align-self: flex-start;
+  background: rgba(22, 30, 62, 0.7);
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.inputRow {
+  display: flex;
+  gap: 12px;
+  margin-top: auto;
+}
+
+.input {
+  flex: 1;
+  background: rgba(18, 26, 52, 0.9);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #fff;
+}
+
+.button {
+  background: linear-gradient(135deg, #22d3ee, #6366f1);
+  border: none;
+  border-radius: 12px;
+  padding: 0 18px;
+  color: #0b1020;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.sidePane {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.card {
+  padding: 20px;
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(30, 41, 89, 0.9), rgba(10, 15, 30, 0.95));
+  border: 1px solid rgba(129, 140, 248, 0.4);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.6);
+}
+
+.cardTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.stat {
+  background: rgba(15, 23, 42, 0.7);
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+}
+
+.statLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #93c5fd;
+}
+
+.statValue {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.drawer {
+  background: rgba(15, 23, 42, 0.7);
+  border-radius: 16px;
+  border: 1px solid rgba(71, 85, 105, 0.6);
+  padding: 14px;
+}
+
+.drawer summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.traceItem {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(30, 41, 59, 0.7);
+  border-radius: 12px;
+  font-size: 12px;
+  white-space: pre-wrap;
+}
+
+.highlight {
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.confirmation {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px dashed rgba(56, 189, 248, 0.7);
+}
+
+@media (max-width: 960px) {
+  .page {
+    grid-template-columns: 1fr;
+  }
+}

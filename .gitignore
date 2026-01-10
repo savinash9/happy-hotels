@@ -1,0 +1,11 @@
+node_modules
+.pnpm-store
+.env
+.env.local
+apps/web/.next
+apps/web/out
+packages/api/prisma/dev.db
+packages/api/prisma/dev.db-journal
+packages/api/dist
+packages/mcp/dist
+apps/web/.turbo
