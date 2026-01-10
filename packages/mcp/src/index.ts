@@ -4,10 +4,6 @@ import { fileURLToPath } from "url";
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema
-} from "@modelcontextprotocol/sdk/types.js";
 import { createBooking, getBooking, updateBooking } from "./client.js";
 
 dotenv.config();
@@ -40,7 +36,7 @@ const getBookingSchema = z.object({
   id: z.string()
 });
 
-server.setRequestHandler(ListToolsRequestSchema, async () => {
+server.setRequestHandler("tools/list", async () => {
   return {
     tools: [
       {
@@ -81,7 +77,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   };
 });
 
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler("tools/call", async (request) => {
   try {
     if (request.params.name === "create_booking") {
       const input = createBookingSchema.parse(request.params.arguments);
