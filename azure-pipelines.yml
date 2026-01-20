@@ -1,30 +1,15 @@
-trigger:
-- main
-
 pool:
   vmImage: ubuntu-latest
 
 steps:
 - script: |
     curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-  displayName: "Install Postman CLI"
+  displayName: 'Install Postman CLI'
 
 - task: CmdLine@2
-  displayName: "Run Postman tests (JUnit)"
+  displayName: 'Run automated API tests using Postman CLI'
   inputs:
     script: |
-      set -e
-      postman login --with-api-key "$(POSTMAN_API_KEY)"
-
-      postman collection run "29217431-383569be-1c98-4bd3-b694-482d65ac86f7" \
-        --env-var "SF_USERNAME=$(sfUsername)" \
-        --env-var "SF_PASSWORD=$(sfPassword)" \
-        --reporters cli,junit \
-        --reporter-junit-export "postman-results.xml"
-
-- task: PublishTestResults@2
-  displayName: "Publish Postman test results"
-  inputs:
-    testResultsFormat: "JUnit"
-    testResultsFiles: "postman-results.xml"
-    failTaskOnFailedTests: true
+        postman login --with-api-key $(POSTMAN_API_KEY)
+        # Run your collection using Postman CLI
+        postman collection run "29217431-383569be-1c98-4bd3-b694-482d65ac86f7"
